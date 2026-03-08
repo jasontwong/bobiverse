@@ -1,5 +1,6 @@
 import type { TimelineEvent } from '../data/events'
 import { bookMap } from '../data/books'
+import { bobMap } from '../data/bobs'
 
 interface EventCardProps {
   event: TimelineEvent
@@ -30,25 +31,45 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
           )}
         </div>
         <h3 className="text-white font-semibold text-base">{event.title}</h3>
-        <p className="text-slate-400 text-sm">{event.location}</p>
+        <div className="flex flex-wrap gap-1 mt-1">
+          {event.bobLocations.map(({ bobId }) => {
+            const bob = bobMap[bobId]
+            if (!bob) return null
+            return (
+              <span
+                key={bobId}
+                className="text-xs px-1.5 py-0.5 rounded"
+                style={{ backgroundColor: bob.color + '22', color: bob.color }}
+              >
+                {bob.name}
+              </span>
+            )
+          })}
+        </div>
       </div>
 
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-slate-800 pt-3">
           <p className="text-slate-300 text-sm mb-3">{event.description}</p>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div>
-              <span className="text-slate-500 text-xs uppercase tracking-wide">Characters</span>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {event.characters.map((char) => (
-                  <span
-                    key={char}
-                    className="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded"
-                  >
-                    {char}
-                  </span>
-                ))}
-              </div>
+          <div>
+            <span className="text-slate-500 text-xs uppercase tracking-wide">Bob Locations</span>
+            <div className="mt-2 space-y-1">
+              {event.bobLocations.map(({ bobId, location }) => {
+                const bob = bobMap[bobId]
+                if (!bob) return null
+                return (
+                  <div key={bobId} className="flex items-center gap-2 text-sm">
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: bob.color }}
+                    />
+                    <span style={{ color: bob.color }} className="font-medium w-16 flex-shrink-0">
+                      {bob.name}
+                    </span>
+                    <span className="text-slate-400">{location}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>

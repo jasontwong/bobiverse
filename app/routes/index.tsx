@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { books } from '../data/books'
+import { bobs } from '../data/bobs'
 import { events } from '../data/events'
 import { BookFilter } from '../components/BookFilter'
+import { BobFilter } from '../components/BobFilter'
 import { Timeline } from '../components/Timeline'
 
 export const Route = createFileRoute('/')({
@@ -12,6 +14,9 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const [selectedBooks, setSelectedBooks] = useState<Set<string>>(
     new Set(books.map((b) => b.id))
+  )
+  const [selectedBobs, setSelectedBobs] = useState<Set<string>>(
+    new Set(bobs.map((b) => b.id))
   )
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null)
 
@@ -27,11 +32,27 @@ function HomePage() {
     })
   }
 
+  function toggleBob(bobId: string) {
+    setSelectedBobs((prev) => {
+      const next = new Set(prev)
+      if (next.has(bobId)) {
+        next.delete(bobId)
+      } else {
+        next.add(bobId)
+      }
+      return next
+    })
+  }
+
   function toggleEvent(id: string) {
     setExpandedEvent((prev) => (prev === id ? null : id))
   }
 
-  const filteredEvents = events.filter((e) => selectedBooks.has(e.bookId))
+  const filteredEvents = events.filter(
+    (e) =>
+      selectedBooks.has(e.bookId) &&
+      e.bobLocations.some((bl) => selectedBobs.has(bl.bobId))
+  )
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -43,7 +64,15 @@ function HomePage() {
         </p>
       </header>
 
-      <BookFilter selectedBooks={selectedBooks} onToggle={toggleBook} />
+      <div className="mb-2">
+        <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">Filter by Book</p>
+        <BookFilter selectedBooks={selectedBooks} onToggle={toggleBook} />
+      </div>
+
+      <div className="mb-8">
+        <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">Filter by Bob</p>
+        <BobFilter selectedBobs={selectedBobs} onToggle={toggleBob} />
+      </div>
 
       <Timeline
         events={filteredEvents}
