@@ -9,5 +9,6 @@
     "paths": {
       "~/*": ["./app/*"]
     }
-  }
+  },
+  "include": ["app", "vite.config.ts"]
 }

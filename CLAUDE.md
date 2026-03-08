@@ -16,29 +16,27 @@ This is the **Bobiverse Interactive Timeline Website** — a server-side rendere
 
 ### Tech Stack
 
-- **Framework**: TanStack Start (built on Vinxi/Nitro) for SSR
+- **Framework**: TanStack Start (`@tanstack/react-start`) for SSR, using Vite + Nitro
 - **Routing**: TanStack Router with file-based routing (`app/routes/`)
 - **Styling**: Tailwind CSS v4 via `@tailwindcss/vite` plugin
 - **Language**: TypeScript (strict mode, Bundler module resolution)
-- **Deployment**: Vercel (via Nitro vercel preset in `app.config.ts`)
-- **Package Manager**: pnpm
+- **Deployment**: Vercel (via Nitro vercel preset in `vite.config.ts`)
+- **Package Manager**: pnpm (requires Node.js 22+)
 
 ### Key Design Decisions
 
 - **File-based routing**: Routes live in `app/routes/`. The route tree is auto-generated to `app/routeTree.gen.ts` (gitignored).
 - **Data layer**: Static TypeScript data files in `app/data/` — `books.ts` defines the 6 books with colors, `events.ts` defines 20 timeline events referencing books by ID.
 - **Client-side interactivity**: Book filter (toggle which books' events appear) and event card expansion are managed with React `useState` in the index route.
-- **SSR entry points**: `app/client.tsx` (hydration) and `app/ssr.tsx` (server handler).
+- **No manual entry points**: `@tanstack/react-start` handles client/SSR entry automatically via the Vite plugin.
 
 ### Directory Structure
 
 ```
 app/
-  client.tsx          # Client-side hydration entry
-  ssr.tsx             # Server-side rendering entry
-  router.tsx          # TanStack Router setup
+  router.tsx          # TanStack Router setup (getRouter function)
   routes/
-    __root.tsx        # Root layout (HTML shell, meta tags, CSS link)
+    __root.tsx        # Root layout (HTML shell, meta tags, CSS link via shellComponent)
     index.tsx         # Home page with filter + timeline
   components/
     BookFilter.tsx    # Book toggle buttons
@@ -49,6 +47,6 @@ app/
     events.ts         # Timeline events (20 events across 6 books)
   styles/
     app.css           # Tailwind v4 import + global resets
-app.config.ts         # Vinxi/TanStack Start config (Tailwind plugin, Vercel preset)
+vite.config.ts        # Vite config with TanStack Start, Tailwind, Nitro plugins
 tsconfig.json         # TypeScript config with ~/ path alias for app/
 ```

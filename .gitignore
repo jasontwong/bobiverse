@@ -1,6 +1,5 @@
 node_modules
 dist
-.vinxi
 .vercel
 .output
 app/routeTree.gen.ts
