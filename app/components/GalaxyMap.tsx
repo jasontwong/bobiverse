@@ -4,6 +4,7 @@ import { bobs, bobMap } from '../data/bobs'
 import { events } from '../data/events'
 import type { Enemy } from '../data/enemies'
 import { enemies } from '../data/enemies'
+import { books, bookMap } from '../data/books'
 
 const MIN_YEAR = 2133
 const MAX_YEAR = 2280
@@ -117,6 +118,27 @@ export function GalaxyMap() {
   const [year, setYear] = useState(MIN_YEAR)
   const [hoveredSystem, setHoveredSystem] = useState<string | null>(null)
 
+  const eventYears = useMemo(() =>
+    [...new Set(events.map((e) => e.inUniverseYear))].sort((a, b) => a - b)
+  , [])
+
+  const currentBook = useMemo(() => {
+    const past = events.filter((e) => e.inUniverseYear <= year)
+    if (past.length === 0) return null
+    const latest = past.reduce((a, b) => a.inUniverseYear >= b.inUniverseYear ? a : b)
+    return bookMap[latest.bookId] ?? null
+  }, [year])
+
+  function prevEvent() {
+    const prev = [...eventYears].reverse().find((y) => y < year)
+    if (prev !== undefined) setYear(prev)
+  }
+
+  function nextEvent() {
+    const next = eventYears.find((y) => y > year)
+    if (next !== undefined) setYear(next)
+  }
+
   const bobPositions = useMemo(
     () =>
       Object.fromEntries(
@@ -171,21 +193,51 @@ export function GalaxyMap() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Year slider */}
-      <div className="flex items-center gap-4">
-        <span className="text-slate-400 text-sm font-mono">{MIN_YEAR}</span>
-        <input
-          type="range"
-          min={MIN_YEAR}
-          max={MAX_YEAR}
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-          className="flex-1 accent-sky-500"
-        />
-        <span className="text-slate-400 text-sm font-mono">{MAX_YEAR}</span>
-        <span className="text-white font-bold font-mono text-lg w-16 text-right">
-          {year}
-        </span>
+      {/* Book indicator */}
+      {currentBook && (
+        <div className="flex items-center gap-2">
+          <span
+            className="text-xs font-semibold px-2.5 py-1 rounded-full"
+            style={{ backgroundColor: currentBook.color + '22', color: currentBook.color, border: `1px solid ${currentBook.color}55` }}
+          >
+            Book {books.indexOf(currentBook) + 1}: {currentBook.title}
+          </span>
+        </div>
+      )}
+
+      {/* Slider row */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={prevEvent}
+          className="text-slate-400 hover:text-white transition-colors px-2 py-1 text-lg leading-none select-none"
+          title="Previous event"
+        >
+          ◀
+        </button>
+        <span className="text-slate-500 text-xs font-mono w-10 text-right">{MIN_YEAR}</span>
+        <div className="relative flex-1">
+          <input
+            type="range"
+            min={MIN_YEAR}
+            max={MAX_YEAR}
+            value={year}
+            list="event-years"
+            onChange={(e) => setYear(Number(e.target.value))}
+            className="w-full accent-sky-500"
+          />
+          <datalist id="event-years">
+            {eventYears.map((y) => <option key={y} value={y} />)}
+          </datalist>
+        </div>
+        <span className="text-slate-500 text-xs font-mono w-10">{MAX_YEAR}</span>
+        <button
+          onClick={nextEvent}
+          className="text-slate-400 hover:text-white transition-colors px-2 py-1 text-lg leading-none select-none"
+          title="Next event"
+        >
+          ▶
+        </button>
+        <span className="text-white font-bold font-mono text-lg w-16 text-right">{year}</span>
       </div>
 
       {/* Active events */}
