@@ -6,10 +6,10 @@ import { events } from '../data/events'
 const MIN_YEAR = 2133
 const MAX_YEAR = 2280
 
-const VIEW_X = -28
-const VIEW_Y = -30
-const VIEW_W = 82
-const VIEW_H = 60
+const VIEW_X = -25
+const VIEW_Y = -28
+const VIEW_W = 78
+const VIEW_H = 58
 
 interface Position {
   x: number
@@ -168,8 +168,8 @@ export function GalaxyMap() {
           })}
 
           {/* Distance scale */}
-          <line x1={40} y1={26} x2={50} y2={26} stroke="#475569" strokeWidth="0.4" />
-          <text x={42.5} y={24.5} fontSize="1.5" fill="#475569" className="select-none">10 ly</text>
+          <line x1={44} y1={26} x2={54} y2={26} stroke="#475569" strokeWidth="0.4" />
+          <text x={46.5} y={24.5} fontSize="1.5" fill="#475569" className="select-none">10 ly</text>
         </svg>
       </div>
 
