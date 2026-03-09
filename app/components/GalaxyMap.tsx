@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react'
 import { systems, systemMap, locationToSystemId } from '../data/systems'
 import { bobs, bobMap } from '../data/bobs'
 import { events } from '../data/events'
+import type { Enemy } from '../data/enemies'
+import { enemies } from '../data/enemies'
 
 const MIN_YEAR = 2133
 const MAX_YEAR = 2280
@@ -60,6 +62,34 @@ function getBobInterpolatedPosition(bobId: string, year: number): Position | nul
   return {
     x: prevPos.x + (nextPos.x - prevPos.x) * t,
     y: prevPos.y + (nextPos.y - prevPos.y) * t,
+  }
+}
+
+function getEnemyPosition(enemy: Enemy, year: number): { x: number; y: number } | null {
+  const kf = enemy.keyframes
+  if (year < kf[0].year || (!kf[0].visible && year < kf.find(k => k.visible)?.year!)) return null
+
+  // Find surrounding keyframes
+  let prev = kf[0]
+  let next = kf[kf.length - 1]
+  for (let i = 0; i < kf.length - 1; i++) {
+    if (kf[i].year <= year && kf[i + 1].year > year) {
+      prev = kf[i]
+      next = kf[i + 1]
+      break
+    }
+    if (kf[i].year <= year) prev = kf[i]
+  }
+
+  // If not visible at prev keyframe, check if we've reached a visible one
+  if (!prev.visible) return null
+  // If past last keyframe and not visible
+  if (year >= kf[kf.length - 1].year && !kf[kf.length - 1].visible) return null
+
+  const t = next.year === prev.year ? 0 : (year - prev.year) / (next.year - prev.year)
+  return {
+    x: prev.x + (next.x - prev.x) * t,
+    y: prev.y + (next.y - prev.y) * t,
   }
 }
 
@@ -167,6 +197,32 @@ export function GalaxyMap() {
             )
           })}
 
+          {/* Enemy markers */}
+          {enemies.map((enemy) => {
+            const pos = getEnemyPosition(enemy, year)
+            if (!pos) return null
+            const r = 1.3
+            const points = enemy.shape === 'triangle'
+              ? `${pos.x},${pos.y + r} ${pos.x - r * 0.87},${pos.y - r * 0.5} ${pos.x + r * 0.87},${pos.y - r * 0.5}`
+              : `${pos.x},${pos.y - r} ${pos.x + r},${pos.y} ${pos.x},${pos.y + r} ${pos.x - r},${pos.y}`
+            return (
+              <g key={enemy.id}>
+                <polygon points={points} fill={enemy.color} opacity={0.85}>
+                  <title>{enemy.name}</title>
+                </polygon>
+                <text
+                  x={pos.x + 1.4}
+                  y={pos.y + 0.5}
+                  fontSize="1.6"
+                  fill={enemy.color}
+                  className="select-none"
+                >
+                  {enemy.name}
+                </text>
+              </g>
+            )
+          })}
+
           {/* Distance scale */}
           <line x1={44} y1={26} x2={54} y2={26} stroke="#475569" strokeWidth="0.4" />
           <text x={46.5} y={24.5} fontSize="1.5" fill="#475569" className="select-none">10 ly</text>
@@ -201,6 +257,30 @@ export function GalaxyMap() {
               )}
               {!isActive && (
                 <span className="text-slate-600 text-xs">not yet active</span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {/* Enemy legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-slate-800 pt-3 mt-1">
+        {enemies.map((enemy) => {
+          const pos = getEnemyPosition(enemy, year)
+          const isActive = pos !== null
+          const r = 6
+          const shape = enemy.shape === 'triangle'
+            ? `M${r/2},${r} L0,0 L${r},0 Z`
+            : `M${r/2},0 L${r},${r/2} L${r/2},${r} L0,${r/2} Z`
+          return (
+            <div key={enemy.id} className="flex items-center gap-1.5 text-sm">
+              <svg width={r} height={r} viewBox={`0 0 ${r} ${r}`} className="flex-shrink-0">
+                <path d={shape} fill={enemy.color} opacity={isActive ? 0.85 : 0.3} />
+              </svg>
+              <span style={{ color: isActive ? enemy.color : '#475569' }}>
+                {enemy.name}
+              </span>
+              {!isActive && (
+                <span className="text-slate-600 text-xs">inactive</span>
               )}
             </div>
           )
