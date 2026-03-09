@@ -18,6 +18,19 @@ interface Position {
   y: number
 }
 
+type EntityMarker = {
+  id: string
+  name: string
+  color: string
+  kind: 'bob'
+} | {
+  id: string
+  name: string
+  color: string
+  kind: 'enemy'
+  shape: 'triangle' | 'diamond'
+}
+
 function getBobInterpolatedPosition(bobId: string, year: number): Position | null {
   // All events for this Bob, sorted by year
   const bobEvents = events
@@ -93,8 +106,16 @@ function getEnemyPosition(enemy: Enemy, year: number): { x: number; y: number } 
   }
 }
 
+function arcOffset(index: number, total: number): { dx: number; dy: number } {
+  if (total === 1) return { dx: 0, dy: 0 }
+  const radius = total <= 3 ? 1.8 : total <= 6 ? 2.4 : 3.0
+  const angle = (index / total) * 2 * Math.PI - Math.PI / 2
+  return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius }
+}
+
 export function GalaxyMap() {
   const [year, setYear] = useState(MIN_YEAR)
+  const [hoveredSystem, setHoveredSystem] = useState<string | null>(null)
 
   const bobPositions = useMemo(
     () =>
@@ -105,6 +126,48 @@ export function GalaxyMap() {
   )
 
   const activeEvents = events.filter((e) => e.inUniverseYear === year)
+
+  // Build map of which entities are near which system
+  const entitiesAtSystem = useMemo(() => {
+    const map: Record<string, EntityMarker[]> = {}
+
+    // Bobs
+    for (const bob of bobs) {
+      const pos = bobPositions[bob.id]
+      if (!pos) continue
+      for (const system of systems) {
+        if (Math.hypot(system.x - pos.x, system.y - pos.y) < 0.5) {
+          if (!map[system.id]) map[system.id] = []
+          map[system.id].push({ id: bob.id, name: bob.name, color: bob.color, kind: 'bob' })
+          break
+        }
+      }
+    }
+
+    // Enemies
+    for (const enemy of enemies) {
+      const pos = getEnemyPosition(enemy, year)
+      if (!pos) continue
+      for (const system of systems) {
+        if (Math.hypot(system.x - pos.x, system.y - pos.y) < 1.0) {
+          if (!map[system.id]) map[system.id] = []
+          map[system.id].push({ id: enemy.id, name: enemy.name, color: enemy.color, kind: 'enemy', shape: enemy.shape })
+          break
+        }
+      }
+    }
+
+    return map
+  }, [bobPositions, year])
+
+  // Track which entity IDs are already rendered at a system (to skip in-transit render)
+  const entitiesSnappedToSystem = useMemo(() => {
+    const snapped = new Set<string>()
+    for (const entities of Object.values(entitiesAtSystem)) {
+      for (const e of entities) snapped.add(e.id)
+    }
+    return snapped
+  }, [entitiesAtSystem])
 
   return (
     <div className="flex flex-col gap-4">
@@ -133,7 +196,7 @@ export function GalaxyMap() {
       </div>
 
       {/* SVG map */}
-      <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+      <div className="relative bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
         <svg
           viewBox={`${VIEW_X} ${VIEW_Y} ${VIEW_W} ${VIEW_H}`}
           className="w-full"
@@ -172,11 +235,66 @@ export function GalaxyMap() {
                   {system.notable}
                 </text>
               )}
+              {/* Transparent hover target */}
+              <circle
+                cx={system.x}
+                cy={system.y}
+                r={3}
+                fill="transparent"
+                className="cursor-pointer"
+                onMouseEnter={() => setHoveredSystem(system.id)}
+                onMouseLeave={() => setHoveredSystem(null)}
+              />
             </g>
           ))}
 
-          {/* Bob dots (smooth interpolated positions) */}
+          {/* Entities snapped to systems — combined arc layout */}
+          {systems.map((system) => {
+            const entities = entitiesAtSystem[system.id]
+            if (!entities || entities.length === 0) return null
+            return (
+              <g key={`entities-${system.id}`}>
+                {entities.map((entity, index) => {
+                  const { dx, dy } = arcOffset(index, entities.length)
+                  const ex = system.x + dx
+                  const ey = system.y + dy
+                  if (entity.kind === 'bob') {
+                    return (
+                      <circle
+                        key={entity.id}
+                        cx={ex}
+                        cy={ey}
+                        r={1.1}
+                        fill={entity.color}
+                        opacity={0.9}
+                      >
+                        <title>{entity.name}</title>
+                      </circle>
+                    )
+                  } else {
+                    const r = 1.3
+                    const points = entity.shape === 'triangle'
+                      ? `${ex},${ey + r} ${ex - r * 0.87},${ey - r * 0.5} ${ex + r * 0.87},${ey - r * 0.5}`
+                      : `${ex},${ey - r} ${ex + r},${ey} ${ex},${ey + r} ${ex - r},${ey}`
+                    return (
+                      <polygon
+                        key={entity.id}
+                        points={points}
+                        fill={entity.color}
+                        opacity={0.85}
+                      >
+                        <title>{entity.name}</title>
+                      </polygon>
+                    )
+                  }
+                })}
+              </g>
+            )
+          })}
+
+          {/* In-transit Bobs (not snapped to any system) */}
           {bobs.map((bob) => {
+            if (entitiesSnappedToSystem.has(bob.id)) return null
             const pos = bobPositions[bob.id]
             if (!pos) return null
             return (
@@ -197,8 +315,9 @@ export function GalaxyMap() {
             )
           })}
 
-          {/* Enemy markers */}
+          {/* In-transit enemies (not snapped to any system) */}
           {enemies.map((enemy) => {
+            if (entitiesSnappedToSystem.has(enemy.id)) return null
             const pos = getEnemyPosition(enemy, year)
             if (!pos) return null
             const r = 1.3
@@ -227,6 +346,33 @@ export function GalaxyMap() {
           <line x1={44} y1={26} x2={54} y2={26} stroke="#475569" strokeWidth="0.4" />
           <text x={46.5} y={24.5} fontSize="1.5" fill="#475569" className="select-none">10 ly</text>
         </svg>
+
+        {/* Hover panel overlay */}
+        {hoveredSystem && entitiesAtSystem[hoveredSystem] && entitiesAtSystem[hoveredSystem].length > 0 && (
+          <div className="absolute top-3 right-3 bg-slate-950 border border-slate-700 rounded-lg p-3 min-w-36 pointer-events-none">
+            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2">
+              {systemMap[hoveredSystem]?.name}
+            </p>
+            <div className="space-y-1.5">
+              {entitiesAtSystem[hoveredSystem].map((entity) => (
+                <div key={entity.id} className="flex items-center gap-2">
+                  {entity.kind === 'bob' ? (
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: entity.color }} />
+                  ) : (
+                    <svg width="8" height="8" viewBox="0 0 8 8" className="flex-shrink-0">
+                      {entity.shape === 'triangle' ? (
+                        <polygon points="4,8 0,0 8,0" fill={entity.color} />
+                      ) : (
+                        <polygon points="4,0 8,4 4,8 0,4" fill={entity.color} />
+                      )}
+                    </svg>
+                  )}
+                  <span className="text-sm" style={{ color: entity.color }}>{entity.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bob legend */}
