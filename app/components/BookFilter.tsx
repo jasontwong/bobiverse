@@ -7,19 +7,24 @@ interface BookFilterProps {
 
 export function BookFilter({ selectedBooks, onToggle }: BookFilterProps) {
   return (
-    <div className="flex flex-wrap gap-2 mb-8">
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.25rem' }}>
       {books.map((book) => {
         const isSelected = selectedBooks.has(book.id)
         return (
           <button
             key={book.id}
             onClick={() => onToggle(book.id)}
-            className="px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border"
             style={{
-              borderColor: book.color,
-              backgroundColor: isSelected ? book.color : 'transparent',
-              color: isSelected ? '#0f172a' : book.color,
-              opacity: isSelected ? 1 : 0.6,
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.6rem',
+              letterSpacing: '0.08em',
+              padding: '0.3rem 0.75rem',
+              borderRadius: '2px',
+              border: `1px solid ${isSelected ? book.color : book.color + '44'}`,
+              background: isSelected ? book.color + '22' : 'transparent',
+              color: isSelected ? book.color : book.color + '88',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
             }}
           >
             {book.title.split('(')[0].trim()}

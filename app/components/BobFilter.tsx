@@ -7,7 +7,7 @@ interface BobFilterProps {
 
 export function BobFilter({ selectedBobs, onToggle }: BobFilterProps) {
   return (
-    <div className="flex flex-wrap gap-2 mb-8">
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.25rem' }}>
       {bobs.map((bob) => {
         const isSelected = selectedBobs.has(bob.id)
         return (
@@ -15,12 +15,17 @@ export function BobFilter({ selectedBobs, onToggle }: BobFilterProps) {
             key={bob.id}
             onClick={() => onToggle(bob.id)}
             title={bob.description}
-            className="px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border"
             style={{
-              borderColor: bob.color,
-              backgroundColor: isSelected ? bob.color : 'transparent',
-              color: isSelected ? '#0f172a' : bob.color,
-              opacity: isSelected ? 1 : 0.6,
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.6rem',
+              letterSpacing: '0.08em',
+              padding: '0.3rem 0.75rem',
+              borderRadius: '2px',
+              border: `1px solid ${isSelected ? bob.color : bob.color + '44'}`,
+              background: isSelected ? bob.color + '22' : 'transparent',
+              color: isSelected ? bob.color : bob.color + '88',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
             }}
           >
             {bob.name}

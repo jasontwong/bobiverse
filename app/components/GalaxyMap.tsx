@@ -192,13 +192,21 @@ export function GalaxyMap() {
   }, [entitiesAtSystem])
 
   return (
-    <div className="flex flex-col gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Book indicator */}
       {currentBook && (
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span
-            className="text-xs font-semibold px-2.5 py-1 rounded-full"
-            style={{ backgroundColor: currentBook.color + '22', color: currentBook.color, border: `1px solid ${currentBook.color}55` }}
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.6rem',
+              letterSpacing: '0.1em',
+              padding: '0.2rem 0.6rem',
+              borderRadius: '2px',
+              backgroundColor: currentBook.color + '22',
+              color: currentBook.color,
+              border: `1px solid ${currentBook.color}55`,
+            }}
           >
             Book {books.indexOf(currentBook) + 1}: {currentBook.title}
           </span>
@@ -206,16 +214,16 @@ export function GalaxyMap() {
       )}
 
       {/* Slider row */}
-      <div className="flex items-center gap-2">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <button
           onClick={prevEvent}
-          className="text-slate-400 hover:text-white transition-colors px-2 py-1 text-lg leading-none select-none"
+          style={{ color: 'var(--text-secondary)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '0.25rem 0.5rem', fontSize: '1.1rem', lineHeight: 1 }}
           title="Previous event"
         >
           ◀
         </button>
-        <span className="text-slate-500 text-xs font-mono w-10 text-right">{MIN_YEAR}</span>
-        <div className="relative flex-1">
+        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: 'var(--text-muted)', width: '2.5rem', textAlign: 'right' }}>{MIN_YEAR}</span>
+        <div style={{ position: 'relative', flex: 1 }}>
           <input
             type="range"
             min={MIN_YEAR}
@@ -229,34 +237,34 @@ export function GalaxyMap() {
             {eventYears.map((y) => <option key={y} value={y} />)}
           </datalist>
         </div>
-        <span className="text-slate-500 text-xs font-mono w-10">{MAX_YEAR}</span>
+        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: 'var(--text-muted)', width: '2.5rem' }}>{MAX_YEAR}</span>
         <button
           onClick={nextEvent}
-          className="text-slate-400 hover:text-white transition-colors px-2 py-1 text-lg leading-none select-none"
+          style={{ color: 'var(--text-secondary)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '0.25rem 0.5rem', fontSize: '1.1rem', lineHeight: 1 }}
           title="Next event"
         >
           ▶
         </button>
-        <span className="text-white font-bold font-mono text-lg w-16 text-right">{year}</span>
+        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-cyan)', width: '4rem', textAlign: 'right' }}>{year}</span>
       </div>
 
       {/* Active events */}
-      <div className="min-h-6">
+      <div style={{ minHeight: '1.5rem' }}>
         {activeEvents.map((e) => (
-          <p key={e.id} className="text-sky-400 text-sm">★ {e.title}</p>
+          <p key={e.id} style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.7rem', color: 'var(--accent-gold)', margin: 0 }}>★ {e.title}</p>
         ))}
       </div>
 
       {/* SVG map */}
-      <div className="relative bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+      <div style={{ position: 'relative', background: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border-dim)', overflow: 'hidden' }}>
         <svg
           viewBox={`${VIEW_X} ${VIEW_Y} ${VIEW_W} ${VIEW_H}`}
           className="w-full"
           style={{ aspectRatio: `${VIEW_W}/${VIEW_H}` }}
         >
           {/* Axis lines */}
-          <line x1={VIEW_X} y1={0} x2={VIEW_X + VIEW_W} y2={0} stroke="#1e293b" strokeWidth="0.3" />
-          <line x1={0} y1={VIEW_Y} x2={0} y2={VIEW_Y + VIEW_H} stroke="#1e293b" strokeWidth="0.3" />
+          <line x1={VIEW_X} y1={0} x2={VIEW_X + VIEW_W} y2={0} stroke="#0d1528" strokeWidth="0.3" />
+          <line x1={0} y1={VIEW_Y} x2={0} y2={VIEW_Y + VIEW_H} stroke="#0d1528" strokeWidth="0.3" />
 
           {/* Stars */}
           {systems.map((system) => (
@@ -265,13 +273,13 @@ export function GalaxyMap() {
                 cx={system.x}
                 cy={system.y}
                 r={system.id === 'sol' ? 1.2 : 0.8}
-                fill={system.id === 'sol' ? '#fde68a' : '#94a3b8'}
+                fill={system.id === 'sol' ? '#c9974a' : '#3d5270'}
               />
               <text
                 x={system.x + 1.3}
                 y={system.y - 0.8}
                 fontSize="1.8"
-                fill="#64748b"
+                fill="#3d5270"
                 className="select-none"
               >
                 {system.name}
@@ -281,7 +289,7 @@ export function GalaxyMap() {
                   x={system.x + 1.3}
                   y={system.y + 1.4}
                   fontSize="1.4"
-                  fill="#475569"
+                  fill="#3d5270"
                   className="select-none"
                 >
                   {system.notable}
@@ -401,17 +409,34 @@ export function GalaxyMap() {
 
         {/* Hover panel overlay */}
         {hoveredSystem && entitiesAtSystem[hoveredSystem] && entitiesAtSystem[hoveredSystem].length > 0 && (
-          <div className="absolute top-3 right-3 bg-slate-950 border border-slate-700 rounded-lg p-3 min-w-36 pointer-events-none">
-            <p className="text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2">
+          <div style={{
+            position: 'absolute',
+            top: '0.75rem',
+            right: '0.75rem',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-active)',
+            borderRadius: '2px',
+            padding: '0.75rem',
+            minWidth: '9rem',
+            pointerEvents: 'none',
+          }}>
+            <p style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.6rem',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--text-muted)',
+              marginBottom: '0.5rem',
+            }}>
               {systemMap[hoveredSystem]?.name}
             </p>
-            <div className="space-y-1.5">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {entitiesAtSystem[hoveredSystem].map((entity) => (
-                <div key={entity.id} className="flex items-center gap-2">
+                <div key={entity.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   {entity.kind === 'bob' ? (
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: entity.color }} />
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0, backgroundColor: entity.color }} />
                   ) : (
-                    <svg width="8" height="8" viewBox="0 0 8 8" className="flex-shrink-0">
+                    <svg width="8" height="8" viewBox="0 0 8 8" style={{ flexShrink: 0 }}>
                       {entity.shape === 'triangle' ? (
                         <polygon points="4,8 0,0 8,0" fill={entity.color} />
                       ) : (
@@ -419,7 +444,7 @@ export function GalaxyMap() {
                       )}
                     </svg>
                   )}
-                  <span className="text-sm" style={{ color: entity.color }}>{entity.name}</span>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: entity.color }}>{entity.name}</span>
                 </div>
               ))}
             </div>
@@ -428,7 +453,7 @@ export function GalaxyMap() {
       </div>
 
       {/* Bob legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem 1rem' }}>
         {bobs.map((bob) => {
           const pos = bobPositions[bob.id]
           const isActive = pos !== null
@@ -442,26 +467,25 @@ export function GalaxyMap() {
             }
           }
           return (
-            <div key={bob.id} className="flex items-center gap-1.5 text-sm">
+            <div key={bob.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <span
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: bob.color, opacity: isActive ? 1 : 0.3 }}
+                style={{ width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0, backgroundColor: bob.color, opacity: isActive ? 1 : 0.3 }}
               />
-              <span style={{ color: isActive ? bob.color : '#475569' }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: isActive ? bob.color : 'var(--text-muted)' }}>
                 {bob.name}
               </span>
               {isActive && nearestSystem && (
-                <span className="text-slate-500 text-xs">→ {nearestSystem}</span>
+                <span style={{ fontFamily: "'Crimson Pro', serif", fontSize: '0.8rem', color: 'var(--text-secondary)' }}>→ {nearestSystem}</span>
               )}
               {!isActive && (
-                <span className="text-slate-600 text-xs">not yet active</span>
+                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: 'var(--text-muted)' }}>inactive</span>
               )}
             </div>
           )
         })}
       </div>
       {/* Enemy legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-slate-800 pt-3 mt-1">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem 1rem', borderTop: '1px solid var(--border-dim)', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
         {enemies.map((enemy) => {
           const pos = getEnemyPosition(enemy, year)
           const isActive = pos !== null
@@ -470,15 +494,15 @@ export function GalaxyMap() {
             ? `M${r/2},${r} L0,0 L${r},0 Z`
             : `M${r/2},0 L${r},${r/2} L${r/2},${r} L0,${r/2} Z`
           return (
-            <div key={enemy.id} className="flex items-center gap-1.5 text-sm">
-              <svg width={r} height={r} viewBox={`0 0 ${r} ${r}`} className="flex-shrink-0">
+            <div key={enemy.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <svg width={r} height={r} viewBox={`0 0 ${r} ${r}`} style={{ flexShrink: 0 }}>
                 <path d={shape} fill={enemy.color} opacity={isActive ? 0.85 : 0.3} />
               </svg>
-              <span style={{ color: isActive ? enemy.color : '#475569' }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: isActive ? enemy.color : 'var(--text-muted)' }}>
                 {enemy.name}
               </span>
               {!isActive && (
-                <span className="text-slate-600 text-xs">inactive</span>
+                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: 'var(--text-muted)' }}>inactive</span>
               )}
             </div>
           )

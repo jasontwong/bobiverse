@@ -17,11 +17,11 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="bg-slate-950">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
-      <body className="bg-slate-950 text-white min-h-screen">
+      <body style={{ background: 'var(--bg-void)', color: 'var(--text-primary)', minHeight: '100vh' }}>
         {children}
         <Scripts />
       </body>

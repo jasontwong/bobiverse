@@ -14,33 +14,63 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
 
   return (
     <div
-      className="bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors duration-200 overflow-hidden"
-      style={{ borderLeftColor: color, borderLeftWidth: '4px' }}
       onClick={onToggle}
+      style={{
+        background: isExpanded ? 'var(--bg-card-hover)' : 'var(--bg-card)',
+        border: '1px solid',
+        borderColor: isExpanded ? 'var(--border-active)' : 'var(--border-dim)',
+        borderLeft: `3px solid ${color}`,
+        borderRadius: '2px',
+        cursor: 'pointer',
+        transition: 'background 0.2s, border-color 0.2s',
+        overflow: 'hidden',
+      }}
     >
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-1">
-          <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full"
-            style={{ backgroundColor: color + '33', color }}
-          >
+      <div style={{ padding: '0.9rem 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+          <span style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '0.6rem',
+            letterSpacing: '0.1em',
+            padding: '0.15rem 0.5rem',
+            borderRadius: '2px',
+            backgroundColor: color + '22',
+            color,
+            border: `1px solid ${color}44`,
+          }}>
             {book?.title.split('(')[0].trim() ?? event.bookId}
           </span>
           {event.significance === 'major' && (
-            <span className="text-xs text-slate-400">★ Major Event</span>
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: 'var(--accent-gold)', letterSpacing: '0.05em' }}>
+              ◆ MAJOR
+            </span>
           )}
         </div>
-        <h3 className="text-white font-semibold text-base">{event.title}</h3>
-        <div className="flex flex-wrap gap-1 mt-1">
+
+        <h3 style={{
+          fontFamily: "'Cinzel', serif",
+          fontSize: '0.9rem',
+          fontWeight: 600,
+          letterSpacing: '0.04em',
+          color: 'var(--text-primary)',
+          margin: '0 0 0.3rem',
+        }}>
+          {event.title}
+        </h3>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
           {event.bobLocations.map(({ bobId }) => {
             const bob = bobMap[bobId]
             if (!bob) return null
             return (
-              <span
-                key={bobId}
-                className="text-xs px-1.5 py-0.5 rounded"
-                style={{ backgroundColor: bob.color + '22', color: bob.color }}
-              >
+              <span key={bobId} style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '0.6rem',
+                padding: '0.1rem 0.4rem',
+                borderRadius: '2px',
+                backgroundColor: bob.color + '18',
+                color: bob.color,
+              }}>
                 {bob.name}
               </span>
             )
@@ -49,24 +79,45 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
       </div>
 
       {isExpanded && (
-        <div className="px-4 pb-4 border-t border-slate-800 pt-3">
-          <p className="text-slate-300 text-sm mb-3">{event.description}</p>
+        <div style={{
+          padding: '0.8rem 1rem 1rem',
+          borderTop: '1px solid var(--border-dim)',
+        }}>
+          <p style={{
+            fontFamily: "'Crimson Pro', serif",
+            fontSize: '1rem',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.7,
+            fontStyle: 'italic',
+            marginBottom: '1rem',
+          }}>
+            {event.description}
+          </p>
+
           <div>
-            <span className="text-slate-500 text-xs uppercase tracking-wide">Bob Locations</span>
-            <div className="mt-2 space-y-1">
+            <p style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.6rem',
+              letterSpacing: '0.15em',
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              marginBottom: '0.6rem',
+            }}>
+              Probe Locations
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {event.bobLocations.map(({ bobId, location }) => {
                 const bob = bobMap[bobId]
                 if (!bob) return null
                 return (
-                  <div key={bobId} className="flex items-center gap-2 text-sm">
-                    <span
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: bob.color }}
-                    />
-                    <span style={{ color: bob.color }} className="font-medium w-16 flex-shrink-0">
+                  <div key={bobId} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: bob.color, flexShrink: 0 }} />
+                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.7rem', color: bob.color, width: '4.5rem', flexShrink: 0 }}>
                       {bob.name}
                     </span>
-                    <span className="text-slate-400">{location}</span>
+                    <span style={{ fontFamily: "'Crimson Pro', serif", fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                      {location}
+                    </span>
                   </div>
                 )
               })}
