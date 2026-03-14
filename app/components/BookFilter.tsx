@@ -16,7 +16,7 @@ export function BookFilter({ selectedBooks, onToggle }: BookFilterProps) {
             onClick={() => onToggle(book.id)}
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.6rem',
+              fontSize: '0.8rem',
               letterSpacing: '0.08em',
               padding: '0.3rem 0.75rem',
               borderRadius: '2px',

@@ -30,7 +30,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
           <span style={{
             fontFamily: "'Space Mono', monospace",
-            fontSize: '0.6rem',
+            fontSize: '0.75rem',
             letterSpacing: '0.1em',
             padding: '0.15rem 0.5rem',
             borderRadius: '2px',
@@ -41,7 +41,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
             {book?.title.split('(')[0].trim() ?? event.bookId}
           </span>
           {event.significance === 'major' && (
-            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: 'var(--accent-gold)', letterSpacing: '0.05em' }}>
+            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.75rem', color: 'var(--accent-gold)', letterSpacing: '0.05em' }}>
               ◆ MAJOR
             </span>
           )}
@@ -49,7 +49,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
 
         <h3 style={{
           fontFamily: "'Cinzel', serif",
-          fontSize: '0.9rem',
+          fontSize: '1.05rem',
           fontWeight: 600,
           letterSpacing: '0.04em',
           color: 'var(--text-primary)',
@@ -65,7 +65,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
             return (
               <span key={bobId} style={{
                 fontFamily: "'Space Mono', monospace",
-                fontSize: '0.6rem',
+                fontSize: '0.75rem',
                 padding: '0.1rem 0.4rem',
                 borderRadius: '2px',
                 backgroundColor: bob.color + '18',
@@ -85,7 +85,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
         }}>
           <p style={{
             fontFamily: "'Crimson Pro', serif",
-            fontSize: '1rem',
+            fontSize: '1.1rem',
             color: 'var(--text-secondary)',
             lineHeight: 1.7,
             fontStyle: 'italic',
@@ -97,7 +97,7 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
           <div>
             <p style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.6rem',
+              fontSize: '0.75rem',
               letterSpacing: '0.15em',
               color: 'var(--text-muted)',
               textTransform: 'uppercase',
@@ -112,10 +112,10 @@ export function EventCard({ event, isExpanded, onToggle }: EventCardProps) {
                 return (
                   <div key={bobId} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: bob.color, flexShrink: 0 }} />
-                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.7rem', color: bob.color, width: '4.5rem', flexShrink: 0 }}>
+                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.85rem', color: bob.color, width: '4.5rem', flexShrink: 0 }}>
                       {bob.name}
                     </span>
-                    <span style={{ fontFamily: "'Crimson Pro', serif", fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    <span style={{ fontFamily: "'Crimson Pro', serif", fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
                       {location}
                     </span>
                   </div>

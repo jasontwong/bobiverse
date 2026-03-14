@@ -11,7 +11,7 @@ interface TimelineProps {
 export function Timeline({ events, expandedEvent, onToggleEvent }: TimelineProps) {
   if (events.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem 0', fontFamily: "'Space Mono', monospace", fontSize: '0.75rem', letterSpacing: '0.15em', color: 'var(--text-muted)' }}>
+      <div style={{ textAlign: 'center', padding: '4rem 0', fontFamily: "'Space Mono', monospace", fontSize: '0.85rem', letterSpacing: '0.15em', color: 'var(--text-muted)' }}>
         NO EVENTS MATCH CURRENT FILTER
       </div>
     )
@@ -42,7 +42,7 @@ export function Timeline({ events, expandedEvent, onToggleEvent }: TimelineProps
               <div style={{ width: '3.5rem', textAlign: 'right', flexShrink: 0, paddingTop: '0.85rem' }}>
                 <span style={{
                   fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.6rem',
+                  fontSize: '0.85rem',
                   color: 'var(--text-muted)',
                   letterSpacing: '0.05em',
                 }}>

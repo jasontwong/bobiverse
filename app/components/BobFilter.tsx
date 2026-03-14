@@ -17,7 +17,7 @@ export function BobFilter({ selectedBobs, onToggle }: BobFilterProps) {
             title={bob.description}
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.6rem',
+              fontSize: '0.8rem',
               letterSpacing: '0.08em',
               padding: '0.3rem 0.75rem',
               borderRadius: '2px',

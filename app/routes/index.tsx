@@ -82,7 +82,7 @@ function HomePage() {
             onClick={() => setView(v)}
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.7rem',
+              fontSize: '0.85rem',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
               padding: '0.6rem 1.5rem',
@@ -103,13 +103,13 @@ function HomePage() {
       {view === 'timeline' && (
         <>
           <div className="mb-2">
-            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.8rem', letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               ── Filter by Mission Log
             </p>
             <BookFilter selectedBooks={selectedBooks} onToggle={toggleBook} />
           </div>
           <div className="mb-10">
-            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.8rem', letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               ── Filter by Probe Identity
             </p>
             <BobFilter selectedBobs={selectedBobs} onToggle={toggleBob} />

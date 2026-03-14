@@ -23,7 +23,7 @@ html, body {
   background: var(--bg-void);
   color: var(--text-primary);
   font-family: 'Crimson Pro', Georgia, serif;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
